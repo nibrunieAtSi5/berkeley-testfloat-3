@@ -102,9 +102,9 @@ float32_t subj_ui32_to_f32( uint32_t a )
 #if  (__riscv_flen >= 32)
     __asm volatile (
         "fcvt.s.wu %[result], %[input]"
-        : [input] "=r" (a)
-        : [result] "=w" (uZ.f32)
-    )
+        : [result] "=f" (uZ.f)
+        : [input] "r" (a)
+    );
 #else
     uZ.f = a;
 #endif
@@ -119,9 +119,9 @@ float32_t subj_ui64_to_f32( uint64_t a )
 #if  (__riscv_xlen == 64)
     __asm volatile (
         "fcvt.s.lu %[result], %[input]"
-        : [input] "=r" (a)
-        : [result] "=w" (uZ.f32)
-    )
+        : [result] "=f" (uZ.f)
+        : [input] "r" (a)
+    );
 #else
     uZ.f = a;
 #endif
@@ -137,8 +137,8 @@ float32_t subj_i32_to_f32( int32_t a )
 #if  (__riscv_flen >= 32)
     __asm volatile (
         "fcvt.s.w %[result], %[input]"
-        : [input] "=r" (a)
-        : [result] "=w" (uZ.f32)
+        : [result] "=f" (uZ.f)
+        : [input] "r" (a)
     );
 #else
     uZ.f = a;
@@ -153,8 +153,8 @@ float32_t subj_i64_to_f32( int64_t a )
 #if  (__riscv_xlen == 64 && __riscv_flen >= 32)
     __asm volatile (
         "fcvt.s.l %[result], %[input]"
-        : [input] "=r" (a)
-        : [result] "=w" (uZ.f32)
+        : [result] "=f" (uZ.f)
+        : [input] "r" (a)
     );
 #else
     uZ.f = a;
@@ -166,42 +166,56 @@ float32_t subj_i64_to_f32( int64_t a )
 uint_fast32_t subj_f32_to_ui32_rx_minMag( float32_t a )
 {
     union f32_f uA;
+    uA.f32 = a;
 #if  (__riscv_flen >= 32)
+    uint32_t result;
     __asm volatile (
         "fcvt.wu.s %[result], %[input], rtz"
-        : [input] "=w" (a)
-        : [result] "=r" (uA.f32)
+        : [result] "=r" (result)
+        : [input] "f" (uA.f)
     );
+    return result;
 #else
-    uA.f32 = a;
-#endif
     return (uint32_t) uA.f;
+#endif
 
 }
 
 uint_fast64_t subj_f32_to_ui64_rx_minMag( float32_t a )
 {
     union f32_f uA;
+    uint64_t result;
+    uA.f32 = a;
 
 #if (__riscv_xlen == 64 && __riscv_flen >= 32)
     __asm volatile (
         "fcvt.lu.s %[result], %[input], rtz"
-        : [input] "=w" (a)
-        : [result] "=r" (uA.f)
+        : [result] "=r" (result)
+        : [input] "f" (uA.f)
     );
 #else
-    uA.f32 = a;
+    result = (uint64_t) uA.f;
 #endif
-    return (uint64_t) uA.f;
+    return result;
 
 }
 
 int_fast32_t subj_f32_to_i32_rx_minMag( float32_t a )
 {
     union f32_f uA;
-
     uA.f32 = a;
+
+#if (__riscv_flen >= 32)
+    int32_t result;
+    __asm volatile (
+        "fcvt.w.s %[result], %[input], rtz"
+        : [result] "=r" (result)
+        : [input] "f" (uA.f)
+    );
+    return result;
+#else
     return (int32_t) uA.f;
+#endif
 
 }
 
