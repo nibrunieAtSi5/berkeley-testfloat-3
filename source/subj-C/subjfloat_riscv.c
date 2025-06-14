@@ -222,9 +222,18 @@ int_fast32_t subj_f32_to_i32_rx_minMag( float32_t a )
 int_fast64_t subj_f32_to_i64_rx_minMag( float32_t a )
 {
     union f32_f uA;
-
     uA.f32 = a;
+#if (__riscv_xlen == 64 && __riscv_flen >= 32)
+    int64_t result;
+    __asm volatile (
+        "fcvt.l.s %[result], %[input], rtz"
+        : [result] "=r" (result)
+        : [input] "f" (uA.f)
+    );
+    return result;
+#else
     return (int64_t) uA.f;
+#endif
 
 }
 
@@ -234,7 +243,15 @@ float32_t subj_f32_add( float32_t a, float32_t b )
 
     uA.f32 = a;
     uB.f32 = b;
+#if (__riscv_flen >= 32)
+    __asm volatile (
+        "fadd.s %[result], %[inputA], %[inputB]"
+        : [result] "=f" (uZ.f)
+        : [inputA] "f" (uA.f), [inputB] "f" (uB.f)
+    );
+#else
     uZ.f = uA.f + uB.f;
+#endif
     return uZ.f32;
 
 }
@@ -245,7 +262,15 @@ float32_t subj_f32_sub( float32_t a, float32_t b )
 
     uA.f32 = a;
     uB.f32 = b;
+#if (__riscv_flen >= 32)
+    __asm volatile (
+        "fsub.s %[result], %[inputA], %[inputB]"
+        : [result] "=f" (uZ.f)
+        : [inputA] "f" (uA.f), [inputB] "f" (uB.f)
+    );
+#else
     uZ.f = uA.f - uB.f;
+#endif
     return uZ.f32;
 
 }
@@ -256,7 +281,15 @@ float32_t subj_f32_mul( float32_t a, float32_t b )
 
     uA.f32 = a;
     uB.f32 = b;
+#if (__riscv_flen >= 32)
+    __asm volatile (
+        "fmul.s %[result], %[inputA], %[inputB]"
+        : [result] "=f" (uZ.f)
+        : [inputA] "f" (uA.f), [inputB] "f" (uB.f)
+    );
+#else
     uZ.f = uA.f * uB.f;
+#endif
     return uZ.f32;
 
 }
@@ -271,7 +304,15 @@ float32_t subj_f32_mulAdd( float32_t a, float32_t b, float32_t c )
     uA.f32 = a;
     uB.f32 = b;
     uC.f32 = c;
+#if (__riscv_flen >= 32)
+    __asm volatile (
+        "fmadd.s %[result], %[inputC], %[inputA], %[inputB]"
+        : [result] "=f" (uZ.f)
+        : [inputA] "f" (uA.f), [inputB] "f" (uB.f), [inputC] "f" (uC.f)
+    );
+#else
     uZ.f = fmaf( uA.f, uB.f, uC.f );
+#endif
     return uZ.f32;
 
 }
@@ -285,7 +326,15 @@ float32_t subj_f32_div( float32_t a, float32_t b )
 
     uA.f32 = a;
     uB.f32 = b;
+#if (__riscv_flen >= 32)
+    __asm volatile (
+        "fdiv.s %[result], %[inputA], %[inputB]"
+        : [result] "=f" (uZ.f)
+        : [inputA] "f" (uA.f), [inputB] "f" (uB.f)
+    );
+#else
     uZ.f = uA.f / uB.f;
+#endif
     return uZ.f32;
 
 }
@@ -298,7 +347,15 @@ float32_t subj_f32_sqrt( float32_t a )
     union f32_f uA, uZ;
 
     uA.f32 = a;
+#if (__riscv_flen >= 32)
+    __asm volatile (
+        "fsqrt.s %[result], %[input]"
+        : [result] "=f" (uZ.f)
+        : [input] "f" (uA.f)
+    );
+#else   
     uZ.f = sqrtf( uA.f );
+#endif
     return uZ.f32;
 
 }
@@ -312,7 +369,18 @@ bool subj_f32_eq( float32_t a, float32_t b )
 
     uA.f32 = a;
     uB.f32 = b;
+#if (__riscv_flen >= 32)
+    bool result;
+    __asm volatile (
+        "feq.s %[result], %[inputA], %[inputB]"
+        : [result] "=r" (result)
+        : [inputA] "f" (uA.f), [inputB] "f" (uB.f)
+    );
+    return result;
+
+#else
     return (uA.f == uB.f);
+#endif
 
 }
 
@@ -322,7 +390,18 @@ bool subj_f32_le( float32_t a, float32_t b )
 
     uA.f32 = a;
     uB.f32 = b;
+
+#if (__riscv_flen >= 32)
+    bool result;
+    __asm volatile (
+        "fle.s %[result], %[inputA], %[inputB]"
+        : [result] "=r" (result)
+        : [inputA] "f" (uA.f), [inputB] "f" (uB.f)
+    );
+    return result;
+#else
     return (uA.f <= uB.f);
+#endif
 
 }
 
@@ -332,7 +411,17 @@ bool subj_f32_lt( float32_t a, float32_t b )
 
     uA.f32 = a;
     uB.f32 = b;
+#if (__riscv_flen >= 32)
+    bool result;
+    __asm volatile (
+        "flt.s %[result], %[inputA], %[inputB]"
+        : [result] "=r" (result)
+        : [inputA] "f" (uA.f), [inputB] "f" (uB.f)
+    );
+    return result;
+#else
     return (uA.f < uB.f);
+#endif
 
 }
 
