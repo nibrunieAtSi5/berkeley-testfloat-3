@@ -436,7 +436,15 @@ float64_t subj_ui32_to_f64( uint32_t a )
 {
     union f64_d uZ;
 
+#if (__riscv_flen >= 64)
+    __asm volatile (
+        "fcvt.d.wu %[result], %[input]"
+        : [result] "=f" (uZ.d)
+        : [input] "r" (a)
+    );
+#else
     uZ.d = a;
+#endif
     return uZ.f64;
 
 }
@@ -445,7 +453,16 @@ float64_t subj_ui64_to_f64( uint64_t a )
 {
     union f64_d uZ;
 
+#if (__riscv_xlen == 64 && __riscv_flen >= 64)
+    __asm volatile (
+        "fcvt.d.lu %[result], %[input]"
+        : [result] "=f" (uZ.d)
+        : [input] "r" (a)
+    );
+#else
     uZ.d = a;
+#endif
+
     return uZ.f64;
 
 }
@@ -454,7 +471,16 @@ float64_t subj_i32_to_f64( int32_t a )
 {
     union f64_d uZ;
 
+#if (__riscv_flen >= 64)
+    __asm volatile (
+        "fcvt.d.w %[result], %[input]"
+        : [result] "=f" (uZ.d)
+        : [input] "r" (a)
+    );
+#else
     uZ.d = a;
+#endif
+
     return uZ.f64;
 
 }
@@ -463,7 +489,15 @@ float64_t subj_i64_to_f64( int64_t a )
 {
     union f64_d uZ;
 
+#if (__riscv_xlen == 64 && __riscv_flen >= 64)
+    __asm volatile (
+        "fcvt.d.l %[result], %[input]"
+        : [result] "=f" (uZ.d)
+        : [input] "r" (a)
+    );
+#else
     uZ.d = a;
+#endif
     return uZ.f64;
 
 }
@@ -474,7 +508,15 @@ float64_t subj_f32_to_f64( float32_t a )
     union f64_d uZ;
 
     uA.f32 = a;
+#if (__riscv_flen >= 64)
+    __asm volatile (
+        "fcvt.d.s %[result], %[input]"
+        : [result] "=f" (uZ.d)
+        : [input] "f" (uA.f)
+    );
+#else
     uZ.d = uA.f;
+#endif
     return uZ.f64;
 
 }
@@ -484,7 +526,17 @@ uint_fast32_t subj_f64_to_ui32_rx_minMag( float64_t a )
     union f64_d uA;
 
     uA.f64 = a;
+#if (__riscv_flen >= 64)
+    uint32_t result;
+    __asm volatile (
+        "fcvt.wu.d %[result], %[input], rtz"
+        : [result] "=r" (result)
+        : [input] "f" (uA.d)
+    );
+    return result;
+#else
     return (uint32_t) uA.d;
+#endif
 
 }
 
@@ -493,7 +545,17 @@ uint_fast64_t subj_f64_to_ui64_rx_minMag( float64_t a )
     union f64_d uA;
 
     uA.f64 = a;
+#if (__riscv_xlen == 64 && __riscv_flen >= 64)
+    uint64_t result;
+    __asm volatile (
+        "fcvt.lu.d %[result], %[input], rtz"
+        : [result] "=r" (result)
+        : [input] "f" (uA.d)
+    );
+    return result;
+#else
     return (uint64_t) uA.d;
+#endif
 
 }
 
@@ -502,7 +564,17 @@ int_fast32_t subj_f64_to_i32_rx_minMag( float64_t a )
     union f64_d uA;
 
     uA.f64 = a;
+#if (__riscv_flen >= 64)
+    int32_t result;
+    __asm volatile (
+        "fcvt.w.d %[result], %[input], rtz"
+        : [result] "=r" (result)
+        : [input] "f" (uA.d)
+    );
+    return result;
+#else
     return (int32_t) uA.d;
+#endif
 
 }
 
@@ -511,7 +583,17 @@ int_fast64_t subj_f64_to_i64_rx_minMag( float64_t a )
     union f64_d uA;
 
     uA.f64 = a;
+#if (__riscv_xlen == 64 && __riscv_flen >= 64)
+    int64_t result;
+    __asm volatile (
+        "fcvt.l.d %[result], %[input], rtz"
+        : [result] "=r" (result)
+        : [input] "f" (uA.d)
+    );
+    return result;
+#else
     return (int64_t) uA.d;
+#endif
 
 }
 
@@ -521,7 +603,15 @@ float32_t subj_f64_to_f32( float64_t a )
     union f32_f uZ;
 
     uA.f64 = a;
+#if (__riscv_flen >= 64)
+    __asm volatile (
+        "fcvt.s.d %[result], %[input]"
+        : [result] "=f" (uZ.f)
+        : [input] "f" (uA.d)
+    );
+#else
     uZ.f = uA.d;
+#endif
     return uZ.f32;
 
 }
@@ -532,7 +622,15 @@ float64_t subj_f64_add( float64_t a, float64_t b )
 
     uA.f64 = a;
     uB.f64 = b;
+#if (__riscv_flen >= 64)
+    __asm volatile (
+        "fadd.d %[result], %[inputA], %[inputB]"
+        : [result] "=f" (uZ.d)
+        : [inputA] "f" (uA.d), [inputB] "f" (uB.d)
+    );
+#else
     uZ.d = uA.d + uB.d;
+#endif
     return uZ.f64;
 
 }
@@ -543,7 +641,15 @@ float64_t subj_f64_sub( float64_t a, float64_t b )
 
     uA.f64 = a;
     uB.f64 = b;
+#if (__riscv_flen >= 64)
+    __asm volatile (
+        "fsub.d %[result], %[inputA], %[inputB]"
+        : [result] "=f" (uZ.d)
+        : [inputA] "f" (uA.d), [inputB] "f" (uB.d)
+    );
+#else
     uZ.d = uA.d - uB.d;
+#endif
     return uZ.f64;
 
 }
@@ -554,7 +660,15 @@ float64_t subj_f64_mul( float64_t a, float64_t b )
 
     uA.f64 = a;
     uB.f64 = b;
+#if (__riscv_flen >= 64)
+    __asm volatile (
+        "fmul.d %[result], %[inputA], %[inputB]"
+        : [result] "=f" (uZ.d)
+        : [inputA] "f" (uA.d), [inputB] "f" (uB.d)
+    );
+#else
     uZ.d = uA.d * uB.d;
+#endif
     return uZ.f64;
 
 }
@@ -569,7 +683,15 @@ float64_t subj_f64_mulAdd( float64_t a, float64_t b, float64_t c )
     uA.f64 = a;
     uB.f64 = b;
     uC.f64 = c;
+#if (__riscv_flen >= 64)
+    __asm volatile (
+        "fmadd.d %[result], %[inputC], %[inputA], %[inputB]"
+        : [result] "=f" (uZ.d)
+        : [inputA] "f" (uA.d), [inputB] "f" (uB.d), [inputC] "f" (uC.d)
+    );
+#else
     uZ.d = fma( uA.d, uB.d, uC.d );
+#endif
     return uZ.f64;
 
 }
@@ -583,7 +705,15 @@ float64_t subj_f64_div( float64_t a, float64_t b )
 
     uA.f64 = a;
     uB.f64 = b;
+#if (__riscv_flen >= 64)
+    __asm volatile (
+        "fdiv.d %[result], %[inputA], %[inputB]"
+        : [result] "=f" (uZ.d)
+        : [inputA] "f" (uA.d), [inputB] "f" (uB.d)
+    );
+#else
     uZ.d = uA.d / uB.d;
+#endif
     return uZ.f64;
 
 }
@@ -593,7 +723,15 @@ float64_t subj_f64_sqrt( float64_t a )
     union f64_d uA, uZ;
 
     uA.f64 = a;
+#if (__riscv_flen >= 64)
+    __asm volatile (
+        "fsqrt.d %[result], %[input]"
+        : [result] "=f" (uZ.d)
+        : [input] "f" (uA.d)
+    );
+#else
     uZ.d = sqrt( uA.d );
+#endif
     return uZ.f64;
 
 }
@@ -604,7 +742,17 @@ bool subj_f64_eq( float64_t a, float64_t b )
 
     uA.f64 = a;
     uB.f64 = b;
+#if (__riscv_flen >= 64)
+    bool result;
+    __asm volatile (
+        "feq.d %[result], %[inputA], %[inputB]"
+        : [result] "=r" (result)
+        : [inputA] "f" (uA.d), [inputB] "f" (uB.d)
+    );
+    return result;
+#else
     return (uA.d == uB.d);
+#endif
 
 }
 
@@ -614,7 +762,17 @@ bool subj_f64_le( float64_t a, float64_t b )
 
     uA.f64 = a;
     uB.f64 = b;
+#if (__riscv_flen >= 64)
+    bool result;
+    __asm volatile (
+        "fle.d %[result], %[inputA], %[inputB]"
+        : [result] "=r" (result)
+        : [inputA] "f" (uA.d), [inputB] "f" (uB.d)
+    );
+    return result;
+#else
     return (uA.d <= uB.d);
+#endif
 
 }
 
@@ -624,7 +782,17 @@ bool subj_f64_lt( float64_t a, float64_t b )
 
     uA.f64 = a;
     uB.f64 = b;
+#if (__riscv_flen >= 64)
+    bool result;
+    __asm volatile (
+        "flt.d %[result], %[inputA], %[inputB]"
+        : [result] "=r" (result)
+        : [inputA] "f" (uA.d), [inputB] "f" (uB.d)
+    );
+    return result;
+#else
     return (uA.d < uB.d);
+#endif
 
 }
 
