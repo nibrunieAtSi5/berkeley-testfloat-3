@@ -306,7 +306,7 @@ float32_t subj_f32_mulAdd( float32_t a, float32_t b, float32_t c )
     uC.f32 = c;
 #if (__riscv_flen >= 32)
     __asm volatile (
-        "fmadd.s %[result], %[inputC], %[inputA], %[inputB]"
+        "fmadd.s %[result], %[inputA], %[inputB], %[inputC]"
         : [result] "=f" (uZ.f)
         : [inputA] "f" (uA.f), [inputB] "f" (uB.f), [inputC] "f" (uC.f)
     );
@@ -685,7 +685,7 @@ float64_t subj_f64_mulAdd( float64_t a, float64_t b, float64_t c )
     uC.f64 = c;
 #if (__riscv_flen >= 64)
     __asm volatile (
-        "fmadd.d %[result], %[inputC], %[inputA], %[inputB]"
+        "fmadd.d %[result], %[inputA], %[inputB], %[inputC]"
         : [result] "=f" (uZ.d)
         : [inputA] "f" (uA.d), [inputB] "f" (uB.d), [inputC] "f" (uC.d)
     );
