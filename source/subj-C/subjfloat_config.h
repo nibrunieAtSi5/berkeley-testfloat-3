@@ -131,3 +131,10 @@
 
 #endif
 
+#if defined FLOAT16
+#define SUBJ_F16_ADD
+#define SUBJ_F16_SUB
+#define SUBJ_F16_MUL
+#define SUBJ_F16_DIV
+#endif
+

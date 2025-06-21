@@ -854,3 +854,53 @@ bool subj_f128M_lt( const float128_t *aPtr, const float128_t *bPtr )
 
 #endif
 
+#ifdef FLOAT16
+
+union f16_f { float16_t f16; __fp16 h; };
+
+float16_t subj_f16_add( float16_t a, float16_t b )
+{
+    union f16_f uA, uB, uZ;
+
+    uA.f16 = a;
+    uB.f16 = b;
+    uZ.h = uA.h + uB.h;
+    return uZ.f16;
+
+}
+
+float16_t subj_f16_sub( float16_t a, float16_t b )
+{
+    union f16_f uA, uB, uZ;
+
+    uA.f16 = a;
+    uB.f16 = b;
+    uZ.h = uA.h - uB.h;
+    return uZ.f16;
+
+}
+
+float16_t subj_f16_mul( float16_t a, float16_t b )
+{
+    union f16_f uA, uB, uZ;
+
+    uA.f16 = a;
+    uB.f16 = b;
+    uZ.h = uA.h * uB.h;
+    return uZ.f16;
+
+}
+
+float16_t subj_f16_div( float16_t a, float16_t b )
+{
+    union f16_f uA, uB, uZ;
+
+    uA.f16 = a;
+    uB.f16 = b;
+    uZ.h = uA.h / uB.h;
+    return uZ.f16;
+
+}
+
+#endif
+
