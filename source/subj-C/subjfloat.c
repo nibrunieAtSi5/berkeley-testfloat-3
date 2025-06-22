@@ -854,9 +854,9 @@ bool subj_f128M_lt( const float128_t *aPtr, const float128_t *bPtr )
 
 #endif
 
-#ifdef FLOAT16
+#if defined(FLOAT16) && defined(FLT16_MIN)
 
-union f16_f { float16_t f16; __fp16 h; };
+union f16_f { float16_t f16; _Float16 h; };
 
 float16_t subj_f16_add( float16_t a, float16_t b )
 {
@@ -902,5 +902,5 @@ float16_t subj_f16_div( float16_t a, float16_t b )
 
 }
 
-#endif
+#endif // defined(FLOAT16) && defined(FLT16_MIN)
 

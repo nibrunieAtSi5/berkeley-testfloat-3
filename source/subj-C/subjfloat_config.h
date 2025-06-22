@@ -1,8 +1,19 @@
-
+// Trying to get half precision (binary16) support if available
+#define __STDC_WANT_IEC_60559_TYPES_EXT__
+#include <float.h>
 /*----------------------------------------------------------------------------
 | The following macros are defined to indicate all the subject functions that
 | exist.
 *----------------------------------------------------------------------------*/
+
+#if defined(FLOAT16) && defined(FLT16_MIN)
+
+#define SUBJ_F16_ADD
+#define SUBJ_F16_SUB
+#define SUBJ_F16_MUL
+#define SUBJ_F16_DIV
+
+#endif // defined(FLOAT16) && defined(FLT16_MIN)
 
 #define SUBJ_UI32_TO_F32
 #define SUBJ_UI64_TO_F32
@@ -129,12 +140,5 @@
 #define SUBJ_F128_LE
 #define SUBJ_F128_LT
 
-#endif
-
-#if defined FLOAT16
-#define SUBJ_F16_ADD
-#define SUBJ_F16_SUB
-#define SUBJ_F16_MUL
-#define SUBJ_F16_DIV
 #endif
 
