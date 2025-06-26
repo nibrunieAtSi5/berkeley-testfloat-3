@@ -13,6 +13,8 @@
 #define SUBJ_F16_SUB
 #define SUBJ_F16_MUL
 #define SUBJ_F16_DIV
+#define SUBJ_F16_TO_F32
+#define SUBJ_F32_TO_F16
 
 #endif // defined(FLOAT16) && defined(FLT16_MIN)
 

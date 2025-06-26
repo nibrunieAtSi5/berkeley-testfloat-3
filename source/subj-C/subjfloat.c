@@ -902,5 +902,28 @@ float16_t subj_f16_div( float16_t a, float16_t b )
 
 }
 
+float32_t subj_f16_to_f32( float16_t a )
+{
+    union f16_f uA;
+    union f32_f uZ;
+
+    uA.f16 = a;
+    uZ.f = uA.h;
+    return uZ.f32;
+
+}   
+
+float16_t subj_f32_to_f16( float32_t a )
+{
+    union f32_f uA;
+    union f16_f uZ;
+
+    uA.f32 = a;
+    uZ.h = uA.f;
+    return uZ.f16;
+
+}   
+
+
 #endif // defined(FLOAT16) && defined(FLT16_MIN)
 
